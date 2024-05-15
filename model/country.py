@@ -12,3 +12,6 @@ class Country:
 
     def __hash__(self):
         return hash(self.CCode)
+
+    def __eq__(self, other):
+        return self.CCode == other.CCode

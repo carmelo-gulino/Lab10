@@ -25,6 +25,9 @@ class Controller:
             self._view.create_alert("Inserire un anno!")
 
     def print_graph(self):
+        """
+        Stampa il grafo creato e le relative informazioni
+        """
         self._view._txt_result.controls.clear()
         self._view._txt_result.controls.append(ft.Text("Grafo creato correttamente."))
         self._view._txt_result.controls.append(ft.Text(self._model.countries_graph))
@@ -34,13 +37,50 @@ class Controller:
             self._view._txt_result.controls.append(ft.Text(f"{node} -- {degree} vicini."))
         self._view.update_page()
 
-    def handleRaggiungibili(self, e):
-        pass
-
     def fill_ddStato(self, countries):
+        """
+        Riempie il dropdown ogni volta che viene creato un nuovo grafo
+        """
         self._view._ddStato.options.clear()
         if self._view._btnRaggiungibili.disabled:
             self._view._btnRaggiungibili.disabled = False
         for country in countries:
-            self._view._ddStato.options.append(ft.dropdown.Option(country, data=country))
+            self._view._ddStato.options.append(ft.dropdown.Option(key=country.CCode,
+                                                                  text=country.StateNme,
+                                                                  data=country,
+                                                                  on_click=self.read_country))
         self._view.update_page()
+
+    def read_country(self, e):
+        """
+        Estrae l'oggetto Country dopo averlo selezionato dal menu dropdown
+        """
+        self._view._ddStato.data = e.control.data
+
+    def handleRaggiungibiliDFS(self, e):
+        source = self._view._ddStato.data
+        raggiungibili = self._model.get_nodes_DFS(source)
+        self.print_raggiungibili(source, raggiungibili, "DFS")
+
+    def handleRaggiungibiliBFS(self, e):
+        source = self._view._ddStato.data
+        raggiungibili = self._model.get_nodes_BFS(source)
+        self.print_raggiungibili(source, raggiungibili, "BFS")
+
+    def handleRaggiungibiliRicorsione(self, e):
+        source = self._view._ddStato.data
+        esplorabili = set([vicino for vicino in self._model.countries_graph[source]])
+        raggiungibili = self._model.get_nodes_ricorsione(set(), esplorabili, source, source)
+        self.print_raggiungibili(source, raggiungibili, "ricorsivo")
+
+    def print_raggiungibili(self, source, raggiungibili, metodo):
+        """
+        Stampa l'elenco di nodi raggiungibili
+        """
+        self._view._txt_result.controls.clear()
+        self._view._txt_result.controls.append(ft.Text(f"I nodi raggiungibili da {source} con metodo {metodo} sono:"))
+        for country in raggiungibili:
+            self._view._txt_result.controls.append(ft.Text(country))
+        self._view.update_page()
+
+

@@ -1,3 +1,5 @@
+import copy
+
 import networkx as nx
 
 from database.DAO import DAO
@@ -25,3 +27,44 @@ class Model:
             if contiguity.conttype == 1:
                 self.countries_graph.add_edge(s1, s2)   #aggiungo l'arco tra i due nodi (oggetto Contiguity)
 
+    def get_nodes_DFS(self, source):
+        """
+        Nodi raggiungibili tramite DFS
+        """
+        edges = nx.dfs_edges(self.countries_graph, source)
+        raggiungibili = []
+        for u, v in edges:
+            raggiungibili.append(v)
+        return raggiungibili
+
+    def get_nodes_BFS(self, source):
+        """
+        Nodi raggiungibili tramite BFS
+        """
+        edges = nx.bfs_edges(self.countries_graph, source)
+        raggiungibili = []
+        for u, v in edges:
+            raggiungibili.append(v)
+        return raggiungibili
+
+    def get_nodes_ricorsione(self, parziale, esplorabili, source, nodo):
+        """
+        Nodi raggiungibili tramite algoritmo ricorsivo
+        :param parziale: insieme di nodi
+        :param esplorabili: lista di tutti i vicini del nodo di partenza
+        :param source: nodo sorgente
+        :param nodo: nodo di partenza di ogni ricorsione
+        """
+        result = None
+        # CASO BANALE
+        if len(esplorabili) == 0:  #se ho esplorato tutti i vicini della sorgente, ho finito
+            result = copy.deepcopy(parziale)
+            return result
+        # CASO RICORSIVO
+        else:
+            for vicino in self.countries_graph[nodo]:   #guardo i vicini del ndo
+                if nodo == source:
+                    esplorabili.remove(vicino)  #se sto esplorando la sorgente, rimuovo dagli esplorabili il nodo
+                parziale.add(vicino)
+                self.get_nodes_ricorsione(parziale, esplorabili, source, vicino)
+            parziale.pop()
