@@ -32,7 +32,7 @@ class View(ft.UserControl):
         self._btnRaggiungibili = ft.ElevatedButton(
             text="Stati raggiungibili",
             disabled=True,
-            on_click=self._controller.handleRaggiungibiliRicorsione)
+            on_click=self._controller.handleRaggiungibiliIterativo)
         row2 = ft.Row([self._ddStato, self._btnRaggiungibili], alignment=ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row2)
         # List View where the reply is printed

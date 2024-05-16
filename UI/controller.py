@@ -69,9 +69,13 @@ class Controller:
 
     def handleRaggiungibiliRicorsione(self, e):
         source = self._view._ddStato.data
-        esplorabili = set([vicino for vicino in self._model.countries_graph[source]])
-        raggiungibili = self._model.get_nodes_ricorsione(set(), esplorabili, source, source)
-        self.print_raggiungibili(source, raggiungibili, "ricorsivo")
+        self._model.get_nodes_ricorsione(source, None)
+        self.print_raggiungibili(source, self._model.raggiungibili, "ricorsivo")
+
+    def handleRaggiungibiliIterativo(self, e):
+        source = self._view._ddStato.data
+        raggiungibili = self._model.get_nodes_iterativo(source)
+        self.print_raggiungibili(source, raggiungibili, "iterativo")
 
     def print_raggiungibili(self, source, raggiungibili, metodo):
         """
